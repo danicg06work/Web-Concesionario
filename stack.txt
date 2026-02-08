@@ -1,0 +1,12 @@
+Fronted:
+	React 
+	Tailwind Css
+Backend
+	Nodejs 
+	NestJs
+	Typescript
+	Arquitectura rest
+Base de datos:
+	PostgreSQL
+Pruebas:
+	Docker
