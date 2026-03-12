@@ -1,6 +1,13 @@
 import { useState, useEffect } from 'react';
 
-const Navbar = () => {
+type NavbarProps = {
+    isAuthenticated: boolean;
+    userLabel: string | null;
+    onAuthClick: () => void;
+    onLogout: () => void;
+};
+
+const Navbar = ({ isAuthenticated, userLabel, onAuthClick, onLogout }: NavbarProps) => {
     const [scrolled, setScrolled] = useState(false);
 
     useEffect(() => {
@@ -25,9 +32,29 @@ const Navbar = () => {
                     <a href="#" className="hover:text-[#FF8000] transition-colors">Concesionarios</a>
                 </div>
 
-                <button className="border border-white/20 px-6 py-2 rounded-full hover:bg-white hover:text-black transition-all duration-300 text-sm uppercase tracking-wider">
-                    Configurar
-                </button>
+                <div className="flex items-center gap-3">
+                    {isAuthenticated && userLabel ? (
+                        <span className="hidden lg:inline text-xs uppercase tracking-wider text-gray-300">
+                            {userLabel}
+                        </span>
+                    ) : null}
+
+                    {isAuthenticated ? (
+                        <button
+                            onClick={onLogout}
+                            className="border border-white/20 px-6 py-2 rounded-full hover:bg-white hover:text-black transition-all duration-300 text-sm uppercase tracking-wider"
+                        >
+                            Cerrar sesion
+                        </button>
+                    ) : (
+                        <button
+                            onClick={onAuthClick}
+                            className="border border-white/20 px-6 py-2 rounded-full hover:bg-white hover:text-black transition-all duration-300 text-sm uppercase tracking-wider"
+                        >
+                            Iniciar sesion
+                        </button>
+                    )}
+                </div>
             </div>
         </nav>
     );

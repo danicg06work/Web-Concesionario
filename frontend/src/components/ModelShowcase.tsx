@@ -1,42 +1,37 @@
 import { useState } from 'react';
+import type { CarModel } from '../types';
 
-const models = [
-    {
-        id: 1,
-        name: "750S",
-        category: "Supercar",
-        power: "750hp",
-        image: "https://website-images.mclaren.com/2554/mclaren-side-models-menu-750s.png",
-        description: "La referencia en rendimiento puro."
-    },
-    {
-        id: 2,
-        name: "Artura Spider",
-        category: "Hybrid",
-        power: "700hp",
-        image: "https://website-images.mclaren.com/3219/mclaren-side-models-menu-artura-spider.jpg",
-        description: "La emoción de la conducción a cielo abierto."
-    },
-    {
-        id: 3,
-        name: "GTS",
-        category: "GT",
-        power: "635hp",
-        image: "https://website-images.mclaren.com/2555/mclaren-side-models-menu-gts.png",
-        description: "Superdeportivo usable a diario."
-    },
-    {
-        id: 4,
-        name: "MCLAREN W1",
-        category: "Ultimate",
-        power: "1300hp",
-        image: "https://website-images.mclaren.com/2556/mclaren-side-models-menu-w1.jpg",
-        description: "De lo virtual a la realidad."
-    }
-];
+type ModelShowcaseProps = {
+    models: CarModel[];
+    favoriteIds: number[];
+    isAuthenticated: boolean;
+    isLoading: boolean;
+    actionLoadingId: number | null;
+    onToggleFavorite: (carModelId: number) => void;
+};
 
-const ModelShowcase = () => {
+const ModelShowcase = ({
+    models,
+    favoriteIds,
+    isAuthenticated,
+    isLoading,
+    actionLoadingId,
+    onToggleFavorite,
+}: ModelShowcaseProps) => {
     const [hovered, setHovered] = useState<number | null>(null);
+    const favoriteSet = new Set(favoriteIds);
+
+    const getPowerLabel = (model: CarModel) => {
+        if (model.powerLabel) {
+            return model.powerLabel;
+        }
+
+        if (typeof model.powerHp === 'number') {
+            return `${model.powerHp}hp`;
+        }
+
+        return 'N/D';
+    };
 
     return (
         <section className="bg-[#111] py-24 px-6 md:px-12 relative overflow-hidden">
@@ -54,6 +49,14 @@ const ModelShowcase = () => {
                     </button>
                 </div>
 
+                {isLoading ? (
+                    <div className="text-center text-gray-300 py-12">Cargando modelos...</div>
+                ) : null}
+
+                {!isLoading && models.length === 0 ? (
+                    <div className="text-center text-gray-300 py-12">No hay modelos disponibles.</div>
+                ) : null}
+
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     {models.map((model) => (
                         <div
@@ -65,7 +68,7 @@ const ModelShowcase = () => {
                             {/* Image */}
                             <div className="absolute inset-0 transition-transform duration-700 group-hover:scale-110">
                                 <img
-                                    src={model.image}
+                                    src={model.imageUrl}
                                     alt={model.name}
                                     className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-500"
                                 />
@@ -81,8 +84,22 @@ const ModelShowcase = () => {
                                 <div className={`overflow-hidden transition-all duration-500 ${hovered === model.id ? 'max-h-24 opacity-100' : 'max-h-0 opacity-0'}`}>
                                     <p className="text-gray-400 text-sm mb-4 border-l-2 border-[#FF8000] pl-3">{model.description}</p>
                                     <div className="flex justify-between items-center border-t border-white/20 pt-3">
-                                        <span className="text-white text-sm font-mono">{model.power}</span>
-                                        <span className="text-white text-xs uppercase tracking-wider group-hover:translate-x-1 transition-transform">Explorar &rarr;</span>
+                                        <span className="text-white text-sm font-mono">{getPowerLabel(model)}</span>
+                                        {isAuthenticated ? (
+                                            <button
+                                                onClick={() => onToggleFavorite(model.id)}
+                                                disabled={actionLoadingId === model.id}
+                                                className="text-white text-xs uppercase tracking-wider hover:text-[#FF8000] transition-colors disabled:opacity-50"
+                                            >
+                                                {actionLoadingId === model.id
+                                                    ? 'Guardando...'
+                                                    : favoriteSet.has(model.id)
+                                                        ? 'Quitar favorito'
+                                                        : 'Anadir favorito'}
+                                            </button>
+                                        ) : (
+                                            <span className="text-white text-xs uppercase tracking-wider group-hover:translate-x-1 transition-transform">Inicia sesion</span>
+                                        )}
                                     </div>
                                 </div>
                             </div>
