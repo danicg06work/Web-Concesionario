@@ -25,6 +25,46 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
+## Quickstart (WebMclaren)
+
+### 1) Levantar PostgreSQL con Docker (desde la raíz del workspace)
+
+```bash
+docker compose up -d
+```
+
+### 2) Configurar variables en backend
+
+Este proyecto ya incluye un `.env` con:
+
+- `DATABASE_URL=postgresql://postgres:postgres@localhost:5432/webmclaren?schema=public`
+- `JWT_SECRET=dev-jwt-secret-cambiar`
+- `JWT_EXPIRES_IN=1d`
+
+### 3) Crear tablas y datos iniciales
+
+```bash
+npm run prisma:generate
+npm run prisma:migrate -- --name init
+npm run prisma:seed
+```
+
+### 4) Arrancar API
+
+```bash
+npm run start:dev
+```
+
+## Endpoints creados
+
+- `POST /auth/register` → registrar usuario
+- `POST /auth/login` → iniciar sesión (JWT)
+- `GET /car-models` → listar modelos
+- `POST /car-models` → crear modelo (requiere Bearer token)
+- `GET /favorites` → favoritos del usuario autenticado
+- `POST /favorites/:carModelId` → añadir favorito
+- `DELETE /favorites/:carModelId` → quitar favorito
+
 ## Project setup
 
 ```bash

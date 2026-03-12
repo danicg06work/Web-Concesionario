@@ -7,6 +7,6 @@ Backend
 	Typescript
 	Arquitectura rest
 Base de datos:
-	PostgreSQL
+	PostgreSQL(Dockerizada)
 Pruebas:
 	Docker
