@@ -8,6 +8,7 @@ type ModelsViewProps = {
   actionLoadingId: number | null;
   onToggleFavorite: (carModelId: number) => void;
   onBackHome: () => void;
+  onViewModel: (carModelId: number) => void;
 };
 
 const ModelsView = ({
@@ -18,6 +19,7 @@ const ModelsView = ({
   actionLoadingId,
   onToggleFavorite,
   onBackHome,
+  onViewModel,
 }: ModelsViewProps) => {
   const favoriteSet = new Set(favoriteIds);
 
@@ -88,25 +90,32 @@ const ModelsView = ({
                 <div className="flex items-center justify-between border-t border-white/10 pt-4">
                   <span className="text-sm text-white font-mono">{getPowerLabel(model)}</span>
 
-                  {isAuthenticated ? (
+                  <div className="flex items-center gap-2">
                     <button
-                      onClick={() => onToggleFavorite(model.id)}
-                      disabled={actionLoadingId === model.id}
-                      className={`text-xs uppercase tracking-wider px-3 py-2 border transition-colors disabled:opacity-60 ${
-                        favoriteSet.has(model.id)
-                          ? 'border-[#FF8000] text-[#FF8000]'
-                          : 'border-white/25 text-white hover:border-[#FF8000] hover:text-[#FF8000]'
-                      }`}
+                      onClick={() => onViewModel(model.id)}
+                      className="text-xs uppercase tracking-wider px-3 py-2 border border-white/25 text-white hover:border-[#FF8000] hover:text-[#FF8000] transition-colors"
                     >
-                      {actionLoadingId === model.id
-                        ? 'Guardando...'
-                        : favoriteSet.has(model.id)
-                          ? 'En favoritos'
-                          : 'Anadir favorito'}
+                      Ver coche
                     </button>
-                  ) : (
-                    <span className="text-xs uppercase tracking-wider text-gray-400">Inicia sesion para favoritos</span>
-                  )}
+
+                    {isAuthenticated ? (
+                      <button
+                        onClick={() => onToggleFavorite(model.id)}
+                        disabled={actionLoadingId === model.id}
+                        className={`text-xs uppercase tracking-wider px-3 py-2 border transition-colors disabled:opacity-60 ${
+                          favoriteSet.has(model.id)
+                            ? 'border-[#FF8000] text-[#FF8000]'
+                            : 'border-white/25 text-white hover:border-[#FF8000] hover:text-[#FF8000]'
+                        }`}
+                      >
+                        {actionLoadingId === model.id
+                          ? 'Guardando...'
+                          : favoriteSet.has(model.id)
+                            ? 'En favoritos'
+                            : 'Favorito'}
+                      </button>
+                    ) : null}
+                  </div>
                 </div>
               </div>
             </article>

@@ -8,6 +8,7 @@ type ModelShowcaseProps = {
     isLoading: boolean;
     actionLoadingId: number | null;
     onToggleFavorite: (carModelId: number) => void;
+    onViewModel: (carModelId: number) => void;
 };
 
 const ModelShowcase = ({
@@ -17,6 +18,7 @@ const ModelShowcase = ({
     isLoading,
     actionLoadingId,
     onToggleFavorite,
+    onViewModel,
 }: ModelShowcaseProps) => {
     const [hovered, setHovered] = useState<number | null>(null);
     const favoriteSet = new Set(favoriteIds);
@@ -87,7 +89,10 @@ const ModelShowcase = ({
                                         <span className="text-white text-sm font-mono">{getPowerLabel(model)}</span>
                                         {isAuthenticated ? (
                                             <button
-                                                onClick={() => onToggleFavorite(model.id)}
+                                                onClick={(event) => {
+                                                    event.stopPropagation();
+                                                    onToggleFavorite(model.id);
+                                                }}
                                                 disabled={actionLoadingId === model.id}
                                                 className="text-white text-xs uppercase tracking-wider hover:text-[#FF8000] transition-colors disabled:opacity-50"
                                             >
@@ -98,11 +103,23 @@ const ModelShowcase = ({
                                                         : 'Anadir favorito'}
                                             </button>
                                         ) : (
-                                            <span className="text-white text-xs uppercase tracking-wider group-hover:translate-x-1 transition-transform">Inicia sesion</span>
+                                            <button
+                                                onClick={() => onViewModel(model.id)}
+                                                className="text-white text-xs uppercase tracking-wider group-hover:translate-x-1 transition-transform"
+                                            >
+                                                Ver coche
+                                            </button>
                                         )}
                                     </div>
                                 </div>
                             </div>
+
+                            <button
+                                onClick={() => onViewModel(model.id)}
+                                className="absolute top-3 right-3 z-20 text-xs uppercase tracking-wider bg-black/70 border border-white/20 px-3 py-1 hover:border-[#FF8000] hover:text-[#FF8000] transition-colors"
+                            >
+                                Ver
+                            </button>
                         </div>
                     ))}
                 </div>

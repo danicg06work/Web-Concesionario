@@ -29,9 +29,9 @@ const Navbar = ({ isAuthenticated, userLabel, onAuthClick, onLogout, onModelsCli
 
                 <div className="hidden md:flex space-x-8 text-sm font-medium tracking-wide">
                     <button onClick={onModelsClick} className="hover:text-[#FF8000] transition-colors">Modelos</button>
-                    <a href="#" className="hover:text-[#FF8000] transition-colors">Racing</a>
-                    <a href="#" className="hover:text-[#FF8000] transition-colors">Experiencias</a>
-                    <a href="#" className="hover:text-[#FF8000] transition-colors">Concesionarios</a>
+                    <button onClick={onHomeClick} className="hover:text-[#FF8000] transition-colors">Racing</button>
+                    <button onClick={onHomeClick} className="hover:text-[#FF8000] transition-colors">Experiencias</button>
+                    <button onClick={onHomeClick} className="hover:text-[#FF8000] transition-colors">Concesionarios</button>
                 </div>
 
                 <div className="flex items-center gap-3">
