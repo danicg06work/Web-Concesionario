@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import ModelShowcase from './components/ModelShowcase';
+import ModelsView from './components/ModelsView';
 import Footer from './components/Footer';
 import { addFavorite, getCarModels, getFavorites, login, register, removeFavorite } from './api';
 import type { CarModel, User } from './types';
@@ -23,6 +24,7 @@ function readStoredUser(): User | null {
 }
 
 function App() {
+  const [activeView, setActiveView] = useState<'home' | 'models'>('home');
   const [token, setToken] = useState<string | null>(() => localStorage.getItem(TOKEN_STORAGE_KEY));
   const [user, setUser] = useState<User | null>(() => readStoredUser());
 
@@ -95,10 +97,36 @@ function App() {
   }, [user]);
 
   const openAuthSection = () => {
+    if (activeView !== 'home') {
+      setActiveView('home');
+      setTimeout(() => {
+        const element = document.getElementById('auth-panel');
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 50);
+      return;
+    }
+
     const element = document.getElementById('auth-panel');
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+  };
+
+  const openModelsView = () => {
+    setActiveView('models');
+    setTimeout(() => {
+      const element = document.getElementById('models-catalog');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 50);
+  };
+
+  const openHomeView = () => {
+    setActiveView('home');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const saveSession = (nextToken: string, nextUser: User) => {
@@ -172,102 +200,126 @@ function App() {
         userLabel={userLabel}
         onAuthClick={openAuthSection}
         onLogout={clearSession}
+        onModelsClick={openModelsView}
+        onHomeClick={openHomeView}
       />
-      <Hero />
 
-      <section id="auth-panel" className="bg-[#0f0f0f] border-y border-white/10 px-6 py-10">
-        <div className="container mx-auto max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-          <div>
-            <h2 className="text-3xl md:text-4xl font-bold uppercase italic tracking-tight">Cuenta WebMclaren</h2>
-            <p className="text-gray-300 mt-3">
-              Inicia sesion o registrate para gestionar tus favoritos en tiempo real.
-            </p>
-            {token && userLabel ? (
-              <p className="text-[#FF8000] mt-4 text-sm uppercase tracking-wider">Sesion activa: {userLabel}</p>
-            ) : null}
-            {dataError ? (
-              <p className="mt-4 text-sm text-red-400">{dataError}</p>
-            ) : null}
-          </div>
+      {activeView === 'home' ? (
+        <>
+          <Hero />
 
-          {!token ? (
-            <form onSubmit={onAuthSubmit} className="bg-black/40 border border-white/10 p-6 space-y-4">
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => setAuthMode('login')}
-                  className={`flex-1 py-2 text-sm uppercase tracking-wider border ${authMode === 'login' ? 'border-[#FF8000] text-[#FF8000]' : 'border-white/20 text-gray-300'}`}
-                >
-                  Login
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setAuthMode('register')}
-                  className={`flex-1 py-2 text-sm uppercase tracking-wider border ${authMode === 'register' ? 'border-[#FF8000] text-[#FF8000]' : 'border-white/20 text-gray-300'}`}
-                >
-                  Registro
-                </button>
+          <section id="auth-panel" className="bg-[#0f0f0f] border-y border-white/10 px-6 py-10">
+            <div className="container mx-auto max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+              <div>
+                <h2 className="text-3xl md:text-4xl font-bold uppercase italic tracking-tight">Cuenta WebMclaren</h2>
+                <p className="text-gray-300 mt-3">
+                  Inicia sesion o registrate para gestionar tus favoritos en tiempo real.
+                </p>
+                {token && userLabel ? (
+                  <p className="text-[#FF8000] mt-4 text-sm uppercase tracking-wider">Sesion activa: {userLabel}</p>
+                ) : null}
+                {dataError ? (
+                  <p className="mt-4 text-sm text-red-400">{dataError}</p>
+                ) : null}
               </div>
 
-              {authMode === 'register' ? (
-                <input
-                  value={name}
-                  onChange={(event) => setName(event.target.value)}
-                  type="text"
-                  placeholder="Nombre (opcional)"
-                  className="w-full bg-black border border-white/20 px-4 py-3 text-sm outline-none focus:border-[#FF8000]"
-                />
-              ) : null}
+              {!token ? (
+                <form onSubmit={onAuthSubmit} className="bg-black/40 border border-white/10 p-6 space-y-4">
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setAuthMode('login')}
+                      className={`flex-1 py-2 text-sm uppercase tracking-wider border ${authMode === 'login' ? 'border-[#FF8000] text-[#FF8000]' : 'border-white/20 text-gray-300'}`}
+                    >
+                      Login
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setAuthMode('register')}
+                      className={`flex-1 py-2 text-sm uppercase tracking-wider border ${authMode === 'register' ? 'border-[#FF8000] text-[#FF8000]' : 'border-white/20 text-gray-300'}`}
+                    >
+                      Registro
+                    </button>
+                  </div>
 
-              <input
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                type="email"
-                placeholder="Email"
-                required
-                className="w-full bg-black border border-white/20 px-4 py-3 text-sm outline-none focus:border-[#FF8000]"
-              />
+                  {authMode === 'register' ? (
+                    <input
+                      value={name}
+                      onChange={(event) => setName(event.target.value)}
+                      type="text"
+                      placeholder="Nombre (opcional)"
+                      className="w-full bg-black border border-white/20 px-4 py-3 text-sm outline-none focus:border-[#FF8000]"
+                    />
+                  ) : null}
 
-              <input
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                type="password"
-                placeholder="Password"
-                required
-                className="w-full bg-black border border-white/20 px-4 py-3 text-sm outline-none focus:border-[#FF8000]"
-              />
+                  <input
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
+                    type="email"
+                    placeholder="Email"
+                    required
+                    className="w-full bg-black border border-white/20 px-4 py-3 text-sm outline-none focus:border-[#FF8000]"
+                  />
 
-              {authError ? <p className="text-red-400 text-sm">{authError}</p> : null}
+                  <input
+                    value={password}
+                    onChange={(event) => setPassword(event.target.value)}
+                    type="password"
+                    placeholder="Password"
+                    required
+                    className="w-full bg-black border border-white/20 px-4 py-3 text-sm outline-none focus:border-[#FF8000]"
+                  />
 
-              <button
-                type="submit"
-                disabled={authLoading}
-                className="w-full bg-[#FF8000] text-black font-bold uppercase tracking-wider py-3 disabled:opacity-60"
-              >
-                {authLoading ? 'Procesando...' : authMode === 'register' ? 'Crear cuenta' : 'Entrar'}
-              </button>
-            </form>
-          ) : (
-            <div className="bg-black/40 border border-white/10 p-6">
-              <p className="text-gray-300 text-sm">
-                Ya puedes agregar o quitar favoritos desde la seccion de modelos.
-              </p>
-              <p className="text-gray-400 text-xs mt-2">
-                Favoritos cargando: {favoritesLoading ? 'si' : 'no'}
-              </p>
+                  {authError ? <p className="text-red-400 text-sm">{authError}</p> : null}
+
+                  <button
+                    type="submit"
+                    disabled={authLoading}
+                    className="w-full bg-[#FF8000] text-black font-bold uppercase tracking-wider py-3 disabled:opacity-60"
+                  >
+                    {authLoading ? 'Procesando...' : authMode === 'register' ? 'Crear cuenta' : 'Entrar'}
+                  </button>
+                </form>
+              ) : (
+                <div className="bg-black/40 border border-white/10 p-6">
+                  <p className="text-gray-300 text-sm">
+                    Ya puedes agregar o quitar favoritos desde la seccion de modelos.
+                  </p>
+                  <p className="text-gray-400 text-xs mt-2">
+                    Favoritos cargando: {favoritesLoading ? 'si' : 'no'}
+                  </p>
+                  <button
+                    onClick={openModelsView}
+                    className="mt-4 border border-[#FF8000] text-[#FF8000] px-4 py-2 text-xs uppercase tracking-wider hover:bg-[#FF8000] hover:text-black transition-colors"
+                  >
+                    Ir al catalogo
+                  </button>
+                </div>
+              )}
             </div>
-          )}
-        </div>
-      </section>
+          </section>
 
-      <ModelShowcase
-        models={models}
-        favoriteIds={favoriteIds}
-        isAuthenticated={Boolean(token)}
-        isLoading={modelsLoading}
-        actionLoadingId={favoriteActionLoadingId}
-        onToggleFavorite={onToggleFavorite}
-      />
+          <ModelShowcase
+            models={models}
+            favoriteIds={favoriteIds}
+            isAuthenticated={Boolean(token)}
+            isLoading={modelsLoading}
+            actionLoadingId={favoriteActionLoadingId}
+            onToggleFavorite={onToggleFavorite}
+          />
+        </>
+      ) : (
+        <ModelsView
+          models={models}
+          favoriteIds={favoriteIds}
+          isAuthenticated={Boolean(token)}
+          isLoading={modelsLoading}
+          actionLoadingId={favoriteActionLoadingId}
+          onToggleFavorite={onToggleFavorite}
+          onBackHome={openHomeView}
+        />
+      )}
+
       <Footer />
     </div>
   );

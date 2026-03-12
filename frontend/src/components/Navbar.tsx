@@ -5,9 +5,11 @@ type NavbarProps = {
     userLabel: string | null;
     onAuthClick: () => void;
     onLogout: () => void;
+    onModelsClick: () => void;
+    onHomeClick: () => void;
 };
 
-const Navbar = ({ isAuthenticated, userLabel, onAuthClick, onLogout }: NavbarProps) => {
+const Navbar = ({ isAuthenticated, userLabel, onAuthClick, onLogout, onModelsClick, onHomeClick }: NavbarProps) => {
     const [scrolled, setScrolled] = useState(false);
 
     useEffect(() => {
@@ -21,12 +23,12 @@ const Navbar = ({ isAuthenticated, userLabel, onAuthClick, onLogout }: NavbarPro
     return (
         <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-black/80 backdrop-blur-md py-4' : 'bg-transparent py-6'}`}>
             <div className="container mx-auto px-6 flex justify-between items-center">
-                <div className="text-2xl font-bold tracking-tighter uppercase italic">
+                <button onClick={onHomeClick} className="text-2xl font-bold tracking-tighter uppercase italic cursor-pointer">
                     McLaren <span className="text-[#FF8000]">.</span>
-                </div>
+                </button>
 
                 <div className="hidden md:flex space-x-8 text-sm font-medium tracking-wide">
-                    <a href="#" className="hover:text-[#FF8000] transition-colors">Modelos</a>
+                    <button onClick={onModelsClick} className="hover:text-[#FF8000] transition-colors">Modelos</button>
                     <a href="#" className="hover:text-[#FF8000] transition-colors">Racing</a>
                     <a href="#" className="hover:text-[#FF8000] transition-colors">Experiencias</a>
                     <a href="#" className="hover:text-[#FF8000] transition-colors">Concesionarios</a>
