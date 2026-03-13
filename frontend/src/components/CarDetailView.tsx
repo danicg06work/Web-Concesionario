@@ -1,4 +1,7 @@
 import type { CarModel } from '../types';
+import Car3DViewer from './Car3dView';
+
+const SHARED_MODEL_3D_URL = '/models/mclarenp1.glb';
 
 type CarDetailViewProps = {
   model: CarModel;
@@ -31,11 +34,7 @@ const CarDetailView = ({
 
         <div className="grid grid-cols-1 xl:grid-cols-[1.3fr_1fr] gap-8 items-start">
           <div className="border border-white/10 bg-black/50 overflow-hidden">
-            <img
-              src={model.imageUrl}
-              alt={model.name}
-              className="w-full h-[34rem] md:h-[44rem] object-cover"
-            />
+            <Car3DViewer url={SHARED_MODEL_3D_URL} />
           </div>
 
           <aside className="border border-white/10 bg-black/50 p-6 md:p-8 space-y-6 sticky top-24">
